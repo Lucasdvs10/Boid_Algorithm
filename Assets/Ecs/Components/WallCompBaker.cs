@@ -10,7 +10,7 @@ namespace Ecs.Components {
 
         public void OnDrawGizmos() {
             
-            Gizmos.DrawWireCube(transform.position, new Vector3(XWallOffset, YWallOffset, zWallOffset));
+            Gizmos.DrawWireCube(transform.position, new Vector3(XWallOffset, YWallOffset, zWallOffset)*2f);
             
             Gizmos.DrawCube(transform.position, Vector3.one);
         }
