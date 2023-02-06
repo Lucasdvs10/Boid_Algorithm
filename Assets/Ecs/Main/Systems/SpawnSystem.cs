@@ -2,6 +2,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Physics.Aspects;
 using Unity.Transforms;
 
@@ -24,6 +25,8 @@ namespace Ecs.Components {
             
             foreach (var entity in entitiesArray) {
                 EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat3(-5f,5f)));
+                EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = rn.NextFloat3(-5f, 
+                5f)});
             }
         }
 
