@@ -1,4 +1,5 @@
-﻿using Ecs.Main.Components.Spawner;
+﻿using Ecs.Main.Components.Rules;
+using Ecs.Main.Components.Spawner;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -15,7 +16,7 @@ namespace Ecs.Components {
 
             EntityArchetype archetype = EntityManager.CreateArchetype(RigidBodyAspect.RequiredComponents);
 
-            NativeArray<Entity> entitiesArray = new NativeArray<Entity>(10, Allocator.Temp);
+            NativeArray<Entity> entitiesArray = new NativeArray<Entity>(3, Allocator.Temp);
 
             EntityManager.Instantiate(spawnerComp.Entity, entitiesArray);
 
@@ -25,8 +26,9 @@ namespace Ecs.Components {
             
             foreach (var entity in entitiesArray) {
                 EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat3(-5f,5f)));
-                EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = rn.NextFloat3(-5f, 
-                5f)});
+                EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = new float3(rn.NextFloat(-20f,20), rn.NextFloat(-20f,20), rn.NextFloat(-20f,20))});
+
+                EntityManager.AddComponent<AlignmentTag>(entity);
             }
         }
 
