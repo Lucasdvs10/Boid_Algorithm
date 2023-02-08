@@ -152,8 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f76d291d05045b29f5b4da8d0806d93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  YWallOffset: 10
-  XWallOffset: 10
+  YWallOffset: 20
+  XWallOffset: 20
   zWallOffset: 10
 --- !u!4 &342892338
 Transform:
