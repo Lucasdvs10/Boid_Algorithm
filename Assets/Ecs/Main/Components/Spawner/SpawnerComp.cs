@@ -3,5 +3,6 @@
 namespace Ecs.Main.Components.Spawner {
     public struct SpawnerComp : IComponentData {
         public Entity Entity;
+        public int NumberToSpawn;
     }
 }

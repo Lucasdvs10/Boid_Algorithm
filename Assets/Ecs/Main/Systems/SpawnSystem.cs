@@ -4,8 +4,8 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
-using Unity.Physics.Aspects;
 using Unity.Transforms;
+using Random = Unity.Mathematics.Random;
 
 namespace Ecs.Components {
     public partial class SpawnSystem : SystemBase{
@@ -14,14 +14,11 @@ namespace Ecs.Components {
 
             var spawnerComp = SystemAPI.GetSingleton<SpawnerComp>();
 
-            EntityArchetype archetype = EntityManager.CreateArchetype(RigidBodyAspect.RequiredComponents);
-
-            NativeArray<Entity> entitiesArray = new NativeArray<Entity>(3, Allocator.Temp);
-
-            EntityManager.Instantiate(spawnerComp.Entity, entitiesArray);
-
-            Random rn = new Random();
+            NativeArray<Entity> entitiesArray = new NativeArray<Entity>(spawnerComp.NumberToSpawn, Allocator.Temp);
             
+            EntityManager.Instantiate(spawnerComp.Entity, entitiesArray);
+            
+            Random rn = new Random();
             rn.InitState();
             
             foreach (var entity in entitiesArray) {
@@ -33,7 +30,6 @@ namespace Ecs.Components {
         }
 
         protected override void OnUpdate() {
-            
         }
     }
 }
