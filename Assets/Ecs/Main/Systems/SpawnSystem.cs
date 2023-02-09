@@ -30,7 +30,8 @@ namespace Ecs.Components {
                 EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = velVector});
                 
                 EntityManager.AddComponent<AlignmentTag>(entity);
-                // EntityManager.AddComponent<CohesionTag>(entity);
+                EntityManager.AddComponent<CohesionTag>(entity);
+                EntityManager.AddComponent<SeparationTag>(entity);
             }
         }
 

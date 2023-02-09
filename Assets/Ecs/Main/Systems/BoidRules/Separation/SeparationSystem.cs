@@ -3,10 +3,9 @@ using Ecs.Components.BoidRules.Alignment.Aspects;
 using Ecs.Main.Components.Rules;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
-namespace Ecs.Components.BoidRules.Cohesion {
-    public partial struct CohesionSystem : ISystem{
+namespace Ecs.Components.BoidRules.Separation {
+    public partial struct SeparationSystem : ISystem{
         public void OnCreate(ref SystemState state) {
         }
 
@@ -18,23 +17,21 @@ namespace Ecs.Components.BoidRules.Cohesion {
             
             foreach ((CohesionTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>() ) { 
                 var currentEntity = currentRgb.Entity;
-                float3 sumPositions = float3.zero;
+                float3 sumOpositePositions = float3.zero;
                 int neighboursAmount = 1;
                 
-                foreach ((CohesionTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<CohesionTag, 
-                MyPhysicsAspect>()
-                 ) {
+                foreach ((CohesionTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>()) {
                     var otherEntity = otherRgb.Entity;
                     var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition,
                         otherRgb.Transform.LocalPosition);
             
                     if (currentEntity != otherEntity && distanceBetweenEntities <= perceiveRadious) {
-                        sumPositions += otherRgb.Transform.LocalPosition;
+                        sumOpositePositions += currentRgb.Transform.LocalPosition - otherRgb.Transform.LocalPosition;
                         neighboursAmount++;
                     }
                 }
             
-                var avaragePosition = sumPositions / neighboursAmount;
+                var avaragePosition = sumOpositePositions / neighboursAmount;
                 var desiredVelocity = avaragePosition - currentRgb.Transform.LocalPosition;
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
@@ -43,7 +40,7 @@ namespace Ecs.Components.BoidRules.Cohesion {
                 
                 var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                             
-                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 10f));
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 100f));
                 currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
