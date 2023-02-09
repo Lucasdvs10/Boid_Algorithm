@@ -37,12 +37,12 @@ namespace Ecs.Components.BoidRules.Alignment {
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 
-                desiredVelocity = MathfTools.SetMag(desiredVelocity, 10);
+                desiredVelocity = MathfTools.SetMag(desiredVelocity, 40);
                 var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                 
                 
-                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 10f));
-                currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 40f));
+                // currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
     }

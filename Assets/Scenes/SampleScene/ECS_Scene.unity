@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   YWallOffset: 50
-  XWallOffset: 50
+  XWallOffset: 200
   zWallOffset: 10
 --- !u!4 &342892338
 Transform:

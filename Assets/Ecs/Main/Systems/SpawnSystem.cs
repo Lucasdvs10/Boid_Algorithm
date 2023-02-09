@@ -6,7 +6,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 namespace Ecs.Components {
@@ -24,12 +23,12 @@ namespace Ecs.Components {
             rn.InitState();
             foreach (var entity in entitiesArray) {
                 EntityManager.AddComponent<PhysicsVelocity>(entity);
-                EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat(-50f,50f), rn.NextFloat(-50f,50f), rn.NextFloat(-50f,50f)));
+                EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat(-100f,100f), rn.NextFloat(-100f,100f), rn.NextFloat(-50f,50f)));
                 float3 velVector = new float3(rn.NextFloat(-1f, 1), rn.NextFloat(-1f, 1), rn.NextFloat(-1f, 1f));
                 velVector = MathfTools.SetMag(velVector, 10);
                 EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = velVector});
                 
-                EntityManager.AddComponent<AlignmentTag>(entity);
+                // EntityManager.AddComponent<AlignmentTag>(entity);
                 EntityManager.AddComponent<CohesionTag>(entity);
                 EntityManager.AddComponent<SeparationTag>(entity);
             }

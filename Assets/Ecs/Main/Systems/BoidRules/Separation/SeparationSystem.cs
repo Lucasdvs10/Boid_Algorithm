@@ -14,34 +14,36 @@ namespace Ecs.Components.BoidRules.Separation {
 
         public void OnUpdate(ref SystemState state) {
             int perceiveRadious = 10; 
+            //todo: a resposta do nosso problema está no separation, eu acredito
+            // talvez esteja no cohesion tbm, não tenho certeza
             
-            foreach ((CohesionTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>() ) { 
+            foreach ((SeparationTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<SeparationTag, MyPhysicsAspect>() ) { 
                 var currentEntity = currentRgb.Entity;
-                float3 sumOpositePositions = float3.zero;
+                float3 sumOpositeDirection = float3.zero;
                 int neighboursAmount = 1;
                 
-                foreach ((CohesionTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>()) {
+                foreach ((SeparationTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<SeparationTag, MyPhysicsAspect>()) {
                     var otherEntity = otherRgb.Entity;
                     var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition,
                         otherRgb.Transform.LocalPosition);
             
                     if (currentEntity != otherEntity && distanceBetweenEntities <= perceiveRadious) {
-                        sumOpositePositions += currentRgb.Transform.LocalPosition - otherRgb.Transform.LocalPosition;
+                        sumOpositeDirection += (currentRgb.Transform.LocalPosition - otherRgb.Transform
+                        .LocalPosition) / distanceBetweenEntities;
                         neighboursAmount++;
                     }
                 }
             
-                var avaragePosition = sumOpositePositions / neighboursAmount;
-                var desiredVelocity = avaragePosition - currentRgb.Transform.LocalPosition;
+                var desiredVelocity = MathfTools.SetMag(sumOpositeDirection, 1) / neighboursAmount;
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 
-                desiredVelocity = MathfTools.SetMag(desiredVelocity, 10);
+                desiredVelocity = MathfTools.SetMag(desiredVelocity, 40);
                 
                 var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                             
                 currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 100f));
-                currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
+                // currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
     }
