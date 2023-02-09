@@ -1,7 +1,9 @@
-﻿using Unity.Entities;
+﻿using Codice.Client.Common;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
+using Time = UnityEngine.Time;
 
 namespace Ecs.Components.BoidRules.Alignment.Aspects {
     readonly partial struct MyPhysicsAspect : IAspect {

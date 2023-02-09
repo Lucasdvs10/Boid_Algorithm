@@ -20,7 +20,7 @@ namespace Ecs.Components.BoidRules.Alignment {
             return (oldVector / oldMag) * newMagnitude;
         }
 
-        private static float GetVectorMag(float3 vector) {
+        public static float GetVectorMag(float3 vector) {
             var oldMag = Mathf.Sqrt(Mathf.Pow(vector.x, 2) + Mathf.Pow(vector.y, 2) + Mathf.Pow(vector.z, 2));
             return oldMag;
         }

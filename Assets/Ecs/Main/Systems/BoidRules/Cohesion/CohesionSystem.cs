@@ -36,11 +36,14 @@ namespace Ecs.Components.BoidRules.Cohesion {
             
                 var avaragePosition = sumPositions / neighboursAmount;
                 var desiredVelocity = avaragePosition - currentRgb.Transform.LocalPosition;
-                Debug.Log(avaragePosition);
+                
+                if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
+                
                 desiredVelocity = MathfTools.SetMag(desiredVelocity, 10);
+                
                 var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                             
-                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 5f));
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 10f));
                 currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
