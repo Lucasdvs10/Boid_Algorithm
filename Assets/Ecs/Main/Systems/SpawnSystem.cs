@@ -22,11 +22,12 @@ namespace Ecs.Components {
             Random rn = new Random();
             rn.InitState();
             foreach (var entity in entitiesArray) {
-                EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat3(-5f,5f)));
+                EntityManager.AddComponent<PhysicsVelocity>(entity);
+                EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat(-50f,50f), rn.NextFloat(-50f,50f), rn.NextFloat(-50f,50f)));
                 EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = new float3(rn.NextFloat(-20f,20), rn.NextFloat(-20f,20), rn.NextFloat(-20f,20))});
 
-                // EntityManager.AddComponent<AlignmentTag>(entity);
-                // EntityManager.AddComponent<CohesionTag>(entity);
+                EntityManager.AddComponent<AlignmentTag>(entity);
+                EntityManager.AddComponent<CohesionTag>(entity);
             }
         }
 

@@ -1,8 +1,9 @@
 ﻿using Ecs.Components.BoidRules.Alignment;
+using Ecs.Components.BoidRules.Alignment.Aspects;
 using Ecs.Main.Components.Rules;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics.Aspects;
+using UnityEngine;
 
 namespace Ecs.Components.BoidRules.Cohesion {
     public partial struct CohesionSystem : ISystem{
@@ -13,30 +14,34 @@ namespace Ecs.Components.BoidRules.Cohesion {
         }
 
         public void OnUpdate(ref SystemState state) {
-            int perceiveRadious = 15; 
-            var entitiesAmount = 100;
-                        
-            foreach ((CohesionTag tag, RigidBodyAspect currentRgb) in SystemAPI.Query<CohesionTag, RigidBodyAspect>() ) { 
+            int perceiveRadious = 5; 
+            
+            foreach ((CohesionTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>() ) { 
                 var currentEntity = currentRgb.Entity;
                 float3 sumPositions = float3.zero;
-                foreach ((CohesionTag othersTag, RigidBodyAspect otherRgb) in SystemAPI.Query<CohesionTag, RigidBodyAspect>()
+                int neighboursAmount = 1;
+                
+                foreach ((CohesionTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<CohesionTag, 
+                MyPhysicsAspect>()
                  ) {
                     var otherEntity = otherRgb.Entity;
-                    var distanceBetweenEntities = MathfTools.Distance(currentRgb.Position, otherRgb.Position);
+                    var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition,
+                        otherRgb.Transform.LocalPosition);
             
                     if (currentEntity != otherEntity && distanceBetweenEntities <= perceiveRadious) {
-                        sumPositions += otherRgb.Position;
+                        sumPositions += otherRgb.Transform.LocalPosition;
+                        neighboursAmount++;
                     }
                 }
             
-                var avaragePosition = sumPositions / entitiesAmount;
-                var desiredVelocity = avaragePosition - currentRgb.Position;
-                
+                var avaragePosition = sumPositions / neighboursAmount;
+                var desiredVelocity = avaragePosition - currentRgb.Transform.LocalPosition;
+                Debug.Log(avaragePosition);
                 desiredVelocity = MathfTools.SetMag(desiredVelocity, 10);
-                var steeringForce = desiredVelocity - currentRgb.LinearVelocity;
+                var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                             
-                currentRgb.ApplyLinearImpulseLocalSpace(MathfTools.LimitMag(steeringForce, 200f));
-                currentRgb.LinearVelocity = MathfTools.LimitMag(currentRgb.LinearVelocity, 10f);
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 5f));
+                currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
     }

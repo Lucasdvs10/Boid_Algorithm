@@ -1,9 +1,7 @@
-﻿using Ecs.Main.Components.Rules;
-using Ecs.Main.Components.Spawner;
+﻿using Ecs.Components.BoidRules.Alignment.Aspects;
+using Ecs.Main.Components.Rules;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics.Aspects;
-using UnityEngine;
 
 namespace Ecs.Components.BoidRules.Alignment {
     public partial struct AlignmentSystem : ISystem {
@@ -18,27 +16,29 @@ namespace Ecs.Components.BoidRules.Alignment {
         }
 
         public void OnUpdate(ref SystemState state) {
-            int perceiveRadious = 15;
-            var entitiesAmount = 100;
+            int perceiveRadious = 5;
             
-            foreach ((AlignmentTag tag, RigidBodyAspect currentRgb) in SystemAPI.Query<AlignmentTag, RigidBodyAspect>() ) {
+            foreach ((AlignmentTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
                 var currentEntity = currentRgb.Entity;
                 float3 sumVelocities = float3.zero;
-                foreach ((AlignmentTag othersTag, RigidBodyAspect otherRgb) in SystemAPI.Query<AlignmentTag, RigidBodyAspect>() ) {
+                int neighboursAmount = 1;
+                foreach ((AlignmentTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
                     var otherEntity = otherRgb.Entity;
-                    var distanceBetweenEntities = MathfTools.Distance(currentRgb.Position, otherRgb.Position);
+                    var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition, otherRgb.Transform.LocalPosition);
 
                     if (currentEntity != otherEntity && distanceBetweenEntities <= perceiveRadious) {
-                        sumVelocities += otherRgb.LinearVelocity;
+                        sumVelocities += otherRgb.PhysicsVelocity.ValueRO.Linear;
+                        neighboursAmount++;
                     }
                 }
 
-                var desiredVelocity = sumVelocities / entitiesAmount;
+                var desiredVelocity = sumVelocities / neighboursAmount;
                 desiredVelocity = MathfTools.SetMag(desiredVelocity, 10);
-                var steeringForce = desiredVelocity - currentRgb.LinearVelocity;
+                var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                 
-                currentRgb.ApplyLinearImpulseLocalSpace(MathfTools.LimitMag(steeringForce, 200f));
-                currentRgb.LinearVelocity = MathfTools.LimitMag(currentRgb.LinearVelocity, 10f);
+                
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 5f));
+                currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
     }
