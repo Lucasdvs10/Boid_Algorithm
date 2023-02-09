@@ -13,7 +13,7 @@ namespace Ecs.Components.BoidRules.Separation {
         }
 
         public void OnUpdate(ref SystemState state) {
-            int perceiveRadious = 10; 
+            int perceiveRadious = 20; 
             //todo: a resposta do nosso problema está no separation, eu acredito
             // talvez esteja no cohesion tbm, não tenho certeza
             
@@ -38,11 +38,11 @@ namespace Ecs.Components.BoidRules.Separation {
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 
-                desiredVelocity = MathfTools.SetMag(desiredVelocity, 40);
+                desiredVelocity = MathfTools.SetMag(desiredVelocity, 10);
                 
                 var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                             
-                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 100f));
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 10f));
                 // currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }

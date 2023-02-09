@@ -16,11 +16,11 @@ namespace Ecs.Components.BoidRules.Alignment {
         }
 
         public void OnUpdate(ref SystemState state) {
-            int perceiveRadious = 10;
+            int perceiveRadious = 20;
             
             foreach ((AlignmentTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
                 var currentEntity = currentRgb.Entity;
-                float3 sumVelocities = float3.zero;
+                float3 sumDirections = float3.zero;
                 int neighboursAmount = 1;
                 
                 foreach ((AlignmentTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
@@ -28,12 +28,12 @@ namespace Ecs.Components.BoidRules.Alignment {
                     var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition, otherRgb.Transform.LocalPosition);
 
                     if (currentEntity != otherEntity && distanceBetweenEntities <= perceiveRadious) {
-                        sumVelocities += otherRgb.PhysicsVelocity.ValueRO.Linear;
+                        sumDirections += MathfTools.SetMag(otherRgb.PhysicsVelocity.ValueRO.Linear, 1);
                         neighboursAmount++;
                     }
                 }
 
-                var desiredVelocity = sumVelocities / neighboursAmount;
+                var desiredVelocity = sumDirections / neighboursAmount;
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 

@@ -28,8 +28,8 @@ namespace Ecs.Components {
                 velVector = MathfTools.SetMag(velVector, 10);
                 EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = velVector});
                 
-                // EntityManager.AddComponent<AlignmentTag>(entity);
-                EntityManager.AddComponent<CohesionTag>(entity);
+                EntityManager.AddComponent<AlignmentTag>(entity);
+                // EntityManager.AddComponent<CohesionTag>(entity);
                 EntityManager.AddComponent<SeparationTag>(entity);
             }
         }

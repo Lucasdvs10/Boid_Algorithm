@@ -3,7 +3,6 @@ using Ecs.Components.BoidRules.Alignment.Aspects;
 using Ecs.Main.Components.Rules;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace Ecs.Components.BoidRules.Cohesion {
     public partial struct CohesionSystem : ISystem{
@@ -14,7 +13,7 @@ namespace Ecs.Components.BoidRules.Cohesion {
         }
 
         public void OnUpdate(ref SystemState state) {
-            int perceiveRadious = 10; 
+            int perceiveRadious = 20; 
             
             foreach ((CohesionTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>() ) { 
                 var currentEntity = currentRgb.Entity;
@@ -38,11 +37,11 @@ namespace Ecs.Components.BoidRules.Cohesion {
                 var desiredVelocity = averagePosition - currentRgb.Transform.LocalPosition;
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 
-                desiredVelocity = MathfTools.SetMag(desiredVelocity, 10);
+                desiredVelocity = MathfTools.SetMag(desiredVelocity, 40);
                 
                 var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                             
-                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 100f));
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 40f));
                 // currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
