@@ -9,7 +9,9 @@ namespace Ecs.Components.BoidRules.Alignment {
         }
 
         public static float3 LimitMag(float3 oldVector, float maxMag) {
-            return SetMag(oldVector, Mathf.Clamp(GetVectorMag(oldVector), 0f, maxMag));
+            if (GetVectorMag(oldVector) <= maxMag) return oldVector;
+            
+            return SetMag(oldVector, maxMag);
         }
 
         public static float3 SetMag(float3 oldVector, float newMagnitude) {

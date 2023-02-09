@@ -20,21 +20,19 @@ namespace Ecs.Components.BoidRules.Separation {
             foreach ((SeparationTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<SeparationTag, MyPhysicsAspect>() ) { 
                 var currentEntity = currentRgb.Entity;
                 float3 sumOpositeDirection = float3.zero;
-                int neighboursAmount = 1;
                 
                 foreach ((SeparationTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<SeparationTag, MyPhysicsAspect>()) {
                     var otherEntity = otherRgb.Entity;
                     var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition,
                         otherRgb.Transform.LocalPosition);
             
-                    if (currentEntity != otherEntity && distanceBetweenEntities <= perceiveRadious) {
+                    if (distanceBetweenEntities > 0 && distanceBetweenEntities <= perceiveRadious) {
                         sumOpositeDirection += (currentRgb.Transform.LocalPosition - otherRgb.Transform
                         .LocalPosition) / distanceBetweenEntities;
-                        neighboursAmount++;
                     }
                 }
             
-                var desiredVelocity = MathfTools.SetMag(sumOpositeDirection, 1) / neighboursAmount;
+                var desiredVelocity = MathfTools.SetMag(sumOpositeDirection, 1);
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 

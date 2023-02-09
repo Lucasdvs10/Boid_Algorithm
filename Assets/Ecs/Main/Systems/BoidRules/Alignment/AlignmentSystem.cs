@@ -21,19 +21,17 @@ namespace Ecs.Components.BoidRules.Alignment {
             foreach ((AlignmentTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
                 var currentEntity = currentRgb.Entity;
                 float3 sumDirections = float3.zero;
-                int neighboursAmount = 1;
                 
                 foreach ((AlignmentTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
                     var otherEntity = otherRgb.Entity;
                     var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition, otherRgb.Transform.LocalPosition);
 
-                    if (currentEntity != otherEntity && distanceBetweenEntities <= perceiveRadious) {
+                    if (distanceBetweenEntities > 0 && distanceBetweenEntities <= perceiveRadious) {
                         sumDirections += MathfTools.SetMag(otherRgb.PhysicsVelocity.ValueRO.Linear, 1);
-                        neighboursAmount++;
                     }
                 }
 
-                var desiredVelocity = sumDirections / neighboursAmount;
+                var desiredVelocity = sumDirections;
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 
