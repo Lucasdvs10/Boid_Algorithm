@@ -23,13 +23,13 @@ namespace Ecs.Components {
             rn.InitState();
             foreach (var entity in entitiesArray) {
                 EntityManager.AddComponent<PhysicsVelocity>(entity);
-                EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat(-100f,100f), rn.NextFloat(-100f,100f), rn.NextFloat(-50f,50f)));
-                float3 velVector = new float3(rn.NextFloat(-1f, 1), rn.NextFloat(-1f, 1), rn.NextFloat(-1f, 1f));
+                EntityManager.SetComponentData(entity, LocalTransform.FromPosition(rn.NextFloat(-100f,100f), rn.NextFloat(-100f,100f), 0f));
+                float3 velVector = new float3(rn.NextFloat(-1f, 1), rn.NextFloat(-1f, 1), 0f);
                 velVector = MathfTools.SetMag(velVector, 10);
                 EntityManager.SetComponentData(entity, new PhysicsVelocity{Angular = 0, Linear = velVector});
                 
                 EntityManager.AddComponent<AlignmentTag>(entity);
-                // EntityManager.AddComponent<CohesionTag>(entity);
+                EntityManager.AddComponent<CohesionTag>(entity);
                 EntityManager.AddComponent<SeparationTag>(entity);
             }
         }

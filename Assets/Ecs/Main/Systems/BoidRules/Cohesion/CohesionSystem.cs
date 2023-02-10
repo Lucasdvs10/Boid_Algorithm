@@ -13,15 +13,13 @@ namespace Ecs.Components.BoidRules.Cohesion {
         }
 
         public void OnUpdate(ref SystemState state) {
-            int perceiveRadious = 5; 
+            int perceiveRadious = 20; 
             
             foreach ((CohesionTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>() ) { 
-                var currentEntity = currentRgb.Entity;
                 float3 sumPositions = float3.zero;
-                int neighboursAmount = 1;
+                int neighboursAmount = 0;
                 
                 foreach ((CohesionTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<CohesionTag, MyPhysicsAspect>()) {
-                    var otherEntity = otherRgb.Entity;
                     var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition,
                         otherRgb.Transform.LocalPosition);
             
@@ -31,16 +29,16 @@ namespace Ecs.Components.BoidRules.Cohesion {
                     }
                 }
             
+                if(neighboursAmount == 0) return;
                 var averagePosition = sumPositions / neighboursAmount;
                 var desiredVelocity = averagePosition - currentRgb.Transform.LocalPosition;
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
                 
-                desiredVelocity = MathfTools.SetMag(desiredVelocity, 0.2f);
+                desiredVelocity = MathfTools.SetMag(desiredVelocity, 40f);
                 
                 var steeringForce = desiredVelocity - currentRgb.PhysicsVelocity.ValueRO.Linear;
                             
-                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 0.2f));
-                // currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
+                currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 10f));
             }
         }
     }

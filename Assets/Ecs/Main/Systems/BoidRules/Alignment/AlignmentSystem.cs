@@ -19,18 +19,19 @@ namespace Ecs.Components.BoidRules.Alignment {
             int perceiveRadious = 20;
             
             foreach ((AlignmentTag tag, MyPhysicsAspect currentRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
-                var currentEntity = currentRgb.Entity;
                 float3 sumDirections = float3.zero;
+                int neighboursAmount = 0;
                 
                 foreach ((AlignmentTag othersTag, MyPhysicsAspect otherRgb) in SystemAPI.Query<AlignmentTag, MyPhysicsAspect>() ) {
-                    var otherEntity = otherRgb.Entity;
                     var distanceBetweenEntities = MathfTools.Distance(currentRgb.Transform.LocalPosition, otherRgb.Transform.LocalPosition);
 
                     if (distanceBetweenEntities > 0 && distanceBetweenEntities <= perceiveRadious) {
                         sumDirections += MathfTools.SetMag(otherRgb.PhysicsVelocity.ValueRO.Linear, 1);
+                        neighboursAmount++;
                     }
                 }
 
+                if(neighboursAmount == 0) return;
                 var desiredVelocity = sumDirections;
                 
                 if(MathfTools.GetVectorMag(desiredVelocity) == 0) return;
@@ -40,7 +41,6 @@ namespace Ecs.Components.BoidRules.Alignment {
                 
                 
                 currentRgb.ApplyImpulse(MathfTools.LimitMag(steeringForce, 40f));
-                // currentRgb.PhysicsVelocity.ValueRW.Linear = MathfTools.LimitMag(currentRgb.PhysicsVelocity.ValueRO.Linear, 10f);
             }
         }
     }
